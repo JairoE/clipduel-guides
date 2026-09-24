@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>ClipDuel First Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F1F2F6; --surface:#FFFFFF; --surface-2:#F7F8FB; --ink:#161922; --muted:#5B6173;
+  --line:#DADDE6; --accent:#F4C20D; --accent-ink:#161922; --btn:#1E2240; --btn-ink:#FFFFFF;
+  --ok:#1F8A5B; --ok-bg:#E3F4EC; --warn:#A86A00; --warn-bg:#FFF3D6; --gone:#B4405A; --gone-bg:#FBE8ED;
+  --frame-bar:#E6E8EF; --shadow:0 1px 2px rgba(22,25,34,.06),0 8px 24px rgba(22,25,34,.08);
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#111319; --surface:#1A1D27; --surface-2:#20242F; --ink:#ECEEF4; --muted:#9BA2B5;
+    --line:#2D3242; --btn:#F4C20D; --btn-ink:#161922; --frame-bar:#252936;
+    --ok:#5BD19A; --ok-bg:#16301F; --warn:#F2B33D; --warn-bg:#33270F; --gone:#F07F98; --gone-bg:#35161E;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#111319; --surface:#1A1D27; --surface-2:#20242F; --ink:#ECEEF4; --muted:#9BA2B5;
+  --line:#2D3242; --btn:#F4C20D; --btn-ink:#161922; --frame-bar:#252936;
+  --ok:#5BD19A; --ok-bg:#16301F; --warn:#F2B33D; --warn-bg:#33270F; --gone:#F07F98; --gone-bg:#35161E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:16px/1.6 var(--body);padding-inline:20px;padding-block:0 64px}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
+p{margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ---------- hero ---------- */
+.hero{padding-block:56px 36px;display:grid;gap:20px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-size:clamp(40px,7vw,76px);font-weight:900;font-stretch:112%;letter-spacing:-.01em;max-width:18ch}
+.hl{background:linear-gradient(transparent 12%,var(--accent) 12%,var(--accent) 88%,transparent 88%);color:var(--accent-ink);padding-inline:.12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero .lede{font-size:19px;max-width:60ch;color:var(--muted)}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.flow a{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);border-radius:999px;color:var(--ink);text-decoration:none;font-weight:500;font-size:14px}
+.flow a:hover{border-color:var(--ink)}
+.flow a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.flow .n{font:500 11px/1 var(--mono);color:var(--muted)}
+.flow .arrow{color:var(--muted);font-size:14px}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:820px}
+@media (max-width:640px){.modes{grid-template-columns:1fr}}
+.mode{display:grid;grid-template-rows:auto auto 1fr auto;gap:6px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-decoration:none;color:var(--ink)}
+.mode:hover{border-color:var(--ink)}
+.mode:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.mode b{font:800 20px/1.15 var(--display);font-stretch:108%}
+.mode span{font-size:14px;color:var(--muted)}
+.mode .mode-k{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.mode .mode-go{font-weight:600;color:var(--ink);margin-top:4px}
+.flow .once{font:500 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;background:var(--accent);color:var(--accent-ink);padding:3px 6px;border-radius:4px}
+
+/* ---------- steps ---------- */
+.step{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start;padding-block:48px;border-top:1px solid var(--line);scroll-margin-top:16px}
+.step-copy{display:grid;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px)}
+.step-num{font:600 13px/1 var(--mono);color:var(--muted);letter-spacing:.06em}
+.step h2{font-size:clamp(28px,3.4vw,40px);font-weight:850;font-stretch:108%}
+.step p{max-width:52ch}
+.step ul{margin:0;padding-left:1.1em;display:grid;gap:6px;max-width:52ch}
+.step li::marker{color:var(--muted)}
+.note{font-size:14px;color:var(--muted);border-left:3px solid var(--accent);padding:2px 0 2px 12px;max-width:52ch}
+.tag{display:inline-block;font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:4px 7px;border-radius:4px;vertical-align:middle}
+.tag.once{background:var(--accent);color:var(--accent-ink)}
+@media (max-width:860px){
+  .step{grid-template-columns:1fr;gap:24px}
+  .step-copy{position:static}
+}
+
+/* ---------- browser frame mockup ---------- */
+.frame{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.chrome{display:flex;align-items:center;gap:10px;background:var(--frame-bar);padding:9px 12px;border-bottom:1px solid var(--line)}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+.url{flex:1;min-width:0;font:12px/1 var(--mono);color:var(--muted);background:var(--surface);border-radius:6px;padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app{padding:18px;display:grid;gap:16px}
+.appbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font:900 18px/1 var(--display);font-stretch:115%}
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:3px;border-radius:8px;border:1px solid var(--line)}
+.tabs span{font-size:13px;font-weight:500;padding:5px 12px;border-radius:6px;color:var(--muted)}
+.tabs span.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.appbar .gear{margin-left:auto;font-size:13px;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+.swatch{width:14px;height:14px;border-radius:3px;background:var(--accent);display:inline-block;border:1px solid rgba(0,0,0,.15)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 14px/1 var(--body);padding:11px 16px;border-radius:8px;background:var(--btn);color:var(--btn-ink);border:0}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:7px 10px;font-size:12.5px}
+.field{display:grid;gap:6px;font-size:13px;color:var(--muted)}
+.input{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+
+/* drop zone */
+.drop{border:2px dashed var(--line);border-radius:10px;padding:26px 16px;display:grid;justify-items:center;gap:8px;text-align:center;background:var(--surface-2)}
+.file{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.file .thumb{width:54px;height:34px;border-radius:5px;background:linear-gradient(135deg,#34495E,#8E6F54)}
+.file .meta{display:grid;gap:2px;min-width:0}
+.file .meta b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill-ok{margin-left:auto;font:500 11px/1 var(--mono);color:var(--ok);background:var(--ok-bg);padding:5px 7px;border-radius:4px;white-space:nowrap}
+
+/* ---------- 9:16 clips with burned captions ---------- */
+.clip{position:relative;aspect-ratio:9/16;max-width:100%;border-radius:10px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;isolation:isolate}
+.clip::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--scene)}
+.clip::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(60% 35% at 50% 38%,rgba(255,255,255,.18),transparent 70%),linear-gradient(transparent 55%,rgba(0,0,0,.35))}
+.s1{--scene:linear-gradient(160deg,#2D3E50 0%,#4F6D7A 45%,#B08968 100%)}
+.s2{--scene:linear-gradient(170deg,#3B2F4A 0%,#7A5C8E 50%,#E0A96D 100%)}
+.s3{--scene:linear-gradient(165deg,#1D3B34 0%,#3C7A68 50%,#C9B27C 100%)}
+.s4{--scene:linear-gradient(160deg,#402A2A 0%,#8C4B3F 50%,#E3B587 100%)}
+.person{position:absolute;left:50%;top:26%;transform:translateX(-50%);width:44%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.14);box-shadow:0 110px 0 30px rgba(255,255,255,.10)}
+.cap{width:100%;padding:0 8% 18%;text-align:center;line-height:1.15;font-family:var(--display);color:#fff}
+.cap .w{display:inline-block;transition:transform .15s ease,background-color .15s ease,color .15s ease}
+/* Bold Pop: heavy white, active word yellow + pop */
+.p-bold .cap{font-weight:900;font-size:clamp(13px,1.9vw,17px);text-shadow:0 2px 0 #000,0 0 3px #000,0 0 6px rgba(0,0,0,.6)}
+.p-bold .w.on{color:#FFD21F;transform:scale(1.1)}
+.p-bold .w{margin-inline:.06em}
+/* Clean Lower-Third: medium weight on a dark band */
+.p-clean .cap{font-family:var(--body);font-weight:600;font-size:clamp(11px,1.5vw,13.5px);padding-bottom:10%}
+.p-clean .cap .band{display:inline;background:rgba(0,0,0,.62);padding:3px 6px;border-radius:3px;box-decoration-break:clone;-webkit-box-decoration-break:clone;line-height:1.7}
+.p-clean .w.on{color:#9FE3FF}
+/* Pill Punch: active word in a pill */
+.p-pill .cap{font-weight:800;font-size:clamp(12px,1.8vw,16px);text-shadow:0 1px 2px rgba(0,0,0,.7)}
+.p-pill .w.on{background:#FF3B6B;border-radius:999px;padding:0 .3em;text-shadow:none;transform:scale(1.08)}
+/* Caps Classic: uppercase, outlined */
+.p-caps .cap{font-weight:800;font-stretch:90%;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(12px,1.7vw,15px);-webkit-text-stroke:.6px #000;text-shadow:0 2px 3px rgba(0,0,0,.6)}
+.p-caps .w.on{color:#7CF29A}
+@media (prefers-reduced-motion:reduce){.cap .w{transition:none}}
+
+/* style pick (step 2) */
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.duel .side{display:grid;gap:10px;justify-items:center}
+.duel .clip{width:100%;max-width:190px}
+.rounds{display:flex;gap:6px;align-items:center}
+.rounds i{width:28px;height:5px;border-radius:3px;background:var(--line);display:block}
+.rounds i.done{background:var(--ink)}
+.rounds i.now{background:var(--accent)}
+.center{text-align:center}
+
+/* progress (step 3) */
+.job{border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:14px}
+.job-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.stage{display:grid;gap:6px}
+.stage .bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.stage .bar b{display:block;height:100%;background:var(--ink)}
+.stage.active .bar b{background:var(--accent);width:62%}
+.stage.done .bar b{width:100%}
+.stage.todo .bar b{width:0}
+.stage .lbl{font-size:12.5px;font-weight:600}
+.stage .sub{font:11px/1.35 var(--mono);color:var(--muted)}
+@media (max-width:520px){.stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.log{font:12px/1.7 var(--mono);color:var(--muted);background:var(--surface-2);border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:pre}
+
+/* clips list (step 4) */
+.moments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.moment{display:grid;gap:8px;align-content:start}
+.moment .clip{width:100%}
+.moment h4{margin:0;font:700 14px/1.25 var(--body)}
+.moment .facts{display:flex;gap:8px;flex-wrap:wrap;font:11.5px/1 var(--mono);color:var(--muted)}
+.score{color:var(--ink);background:var(--accent);padding:3px 5px;border-radius:3px;color:var(--accent-ink)}
+.moment .acts{display:flex;gap:6px;flex-wrap:wrap}
+@media (max-width:600px){.moments{grid-template-columns:repeat(2,minmax(0,1fr))}.moments .moment:nth-child(3){display:none}}
+
+/* composer (step 5) */
+.scrim{background:rgba(22,25,34,.35);padding:22px 16px;display:grid;place-items:center}
+.sheet{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);width:100%;max-width:520px;display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:16px}
+.sheet .clip{width:100%}
+.sheet .body{display:grid;gap:12px;align-content:start;min-width:0}
+.sheet h3{font:800 18px/1.1 var(--display)}
+.checks{display:flex;gap:8px;flex-wrap:wrap}
+.chk{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:13px;font-weight:500}
+.chk .box{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:10px;line-height:1}
+.chk.on{border-color:var(--ink)}
+.chk.on .box{background:var(--ink);color:var(--surface)}
+.textarea{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--surface-2);font-size:13.5px;min-height:74px}
+.count{font:11px/1 var(--mono);color:var(--muted);text-align:right}
+@media (max-width:520px){.sheet{grid-template-columns:1fr}.sheet .clip{max-width:130px}}
+
+/* schedule (step 6) */
+.sched{display:grid;gap:14px}
+.setrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.toggle{width:38px;height:22px;border-radius:999px;background:var(--ok);position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.q{list-style:none;margin:0;padding:0;display:grid;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.q li{display:grid;grid-template-columns:auto 28px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);font-size:13.5px}
+.q li:first-child{border-top:0}
+.q .when{font:12px/1 var(--mono);color:var(--muted);width:78px}
+.q .mini{width:28px;aspect-ratio:9/16;border-radius:4px}
+.q .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q .plat{font:11px/1 var(--mono);color:var(--muted)}
+.q li.next{background:var(--surface-2)}
+
+/* ---------- retired ---------- */
+.retired{border-top:1px solid var(--line);padding-block:48px;display:grid;gap:24px}
+.retired h2{font-size:clamp(26px,3vw,36px);font-weight:850;font-stretch:108%}
+.gone-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.gone{border:1px solid var(--line);border-radius:10px;padding:16px;background:var(--surface);display:grid;gap:8px;align-content:start}
+.gone h3{font:700 16px/1.2 var(--body)}
+.gone p{font-size:14px;color:var(--muted)}
+.chip{justify-self:start;font:500 10.5px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:4px 7px;border-radius:4px}
+.chip.cut{color:var(--gone);background:var(--gone-bg)}
+.chip.fold{color:var(--ok);background:var(--ok-bg)}
+.chip.lab{color:var(--warn);background:var(--warn-bg)}
+.foot{font-size:13px;color:var(--muted);max-width:70ch;padding-top:8px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">ClipDuel · new-user guide · proposed streamlined app</span>
+  <h1>Turn footage into clips, or text into videos. <span class="hl">Then post.</span></h1>
+  <p class="lede">ClipDuel has two ways to start and one way to finish. Make clips from a long video, or make videos from a script or idea. Either way, you pick what you like, then post it now or schedule one a day. This guide walks through the clip path.</p>
+  <div class="modes">
+    <a class="mode" href="#upload"><span class="mode-k">Make clips</span><b>From a long video</b><span>Finds the best moments in a podcast, interview, or stream, then captions and reframes them for Reels and TikTok.</span><span class="mode-go">This guide ↓</span></a>
+    <a class="mode" href="text-to-video.html"><span class="mode-k">Make videos</span><b>From a script or an idea</b><span>Storyboards, draws, and narrates your text in up to four art styles, with your own character in every scene.</span><span class="mode-go">Text-to-video guide →</span></a>
+  </div>
+  <nav class="flow" aria-label="Steps">
+    <a href="#upload"><span class="n">1</span>Upload</a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#style"><span class="n">2</span>Pick a caption style <span class="once">once</span></a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#wait"><span class="n">3</span>Let it work</a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#review"><span class="n">4</span>Review clips</a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#post"><span class="n">5</span>Post</a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#schedule"><span class="n">6</span>Schedule</a>
+  </nav>
+</header>
+
+<!-- STEP 1 -->
+<section class="step" id="upload">
+  <div class="step-copy">
+    <span class="step-num">STEP 1 OF 6</span>
+    <h2>Drop in a long video</h2>
+    <p>Podcasts, interviews, talks, and streams work best. The app needs spoken audio, because it finds moments by reading what was said.</p>
+    <ul>
+      <li>Choose how many clips you want, from 1 to 5.</li>
+      <li>Your saved caption style is shown next to the button. Click it to change.</li>
+      <li>Uploading the same file again costs nothing. The transcript is cached.</li>
+    </ul>
+    <p class="note">Cost is about <span class="mono">$0.006</span> per minute of audio, so a 45-minute episode is roughly 27¢.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: Make clips screen">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / make</div></div>
+    <div class="app">
+      <div class="appbar">
+        <span class="brand">ClipDuel</span>
+        <div class="tabs"><span class="on">Make clips</span><span>Make videos</span><span>Schedule</span></div>
+        <span class="gear"><span class="swatch" aria-hidden="true"></span>Caption style: Bold Pop</span>
+      </div>
+      <div class="drop">
+        <strong>Drop a video file here</strong>
+        <span class="muted small">MP4, MOV, or WebM · up to 2 GB · needs an audio track</span>
+      </div>
+      <div class="file">
+        <div class="thumb" aria-hidden="true"></div>
+        <div class="meta"><b>podcast-ep12-full.mp4</b><span class="mono small muted">45:12 · 1.3 GB · 1920×1080</span></div>
+        <span class="pill-ok">UPLOADED</span>
+      </div>
+      <div class="row">
+        <label class="field">How many clips
+          <span class="input mono">3 ▾</span>
+        </label>
+        <span class="muted small" style="flex:1;min-width:160px">Each clip is 9:16, captioned in <b>Bold Pop</b>, cropped to fill.</span>
+        <span class="btn">Find my clips</span>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 2 -->
+<section class="step" id="style">
+  <div class="step-copy">
+    <span class="step-num">STEP 2 OF 6 · <span class="tag once">first run only</span></span>
+    <h2>Pick the captions you like, three taps</h2>
+    <p>On your first run, the top moment is rendered in all four caption styles. You compare them two at a time, without names, and pick the one that reads better. The winner becomes your default.</p>
+    <ul>
+      <li>Four styles, three picks, done in under a minute.</li>
+      <li>Both sides show the same words, so you judge only the look.</li>
+      <li>Names appear only after the final pick.</li>
+    </ul>
+    <p class="note">This is the only vote in clip mode. You can rerun it anytime from <b>Caption style</b> in the top bar. Video mode works differently: you pick a favorite from each job.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: first-run caption style pick">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / make / style</div></div>
+    <div class="app">
+      <div class="appbar">
+        <span class="brand">ClipDuel</span>
+        <span class="gear">Setting up your caption style</span>
+      </div>
+      <div class="center" style="display:grid;gap:8px;justify-items:center">
+        <div class="rounds" aria-label="Round 2 of 3"><i class="done"></i><i class="now"></i><i></i></div>
+        <strong style="font:800 20px/1.1 var(--display)">Which captions read better?</strong>
+        <span class="muted small">Round 2 of 3 · same moment, same words</span>
+      </div>
+      <div class="duel">
+        <div class="side">
+          <div class="clip s1 p-bold" data-cap="You don't need more ideas, you need fewer"><div class="person" aria-hidden="true"></div></div>
+          <span class="btn ghost sm">This one</span>
+        </div>
+        <div class="side">
+          <div class="clip s1 p-pill" data-cap="You don't need more ideas, you need fewer"><div class="person" aria-hidden="true"></div></div>
+          <span class="btn ghost sm">This one</span>
+        </div>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 3 -->
+<section class="step" id="wait">
+  <div class="step-copy">
+    <span class="step-num">STEP 3 OF 6</span>
+    <h2>Let it find the moments</h2>
+    <p>A job runs in four stages. You can leave the page. The job keeps running and picks up where it stopped if the app restarts.</p>
+    <ul>
+      <li><b>Transcribe:</b> words with exact timestamps.</li>
+      <li><b>Find moments:</b> scores each stretch on hook, flow, value, and trend, then keeps the best ones.</li>
+      <li><b>Render:</b> trims, reframes to 9:16, and burns in captions.</li>
+    </ul>
+    <p class="note">A 45-minute video usually takes a few minutes. Most of that is transcription, which is skipped entirely on a re-upload.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: job progress">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / make</div></div>
+    <div class="app">
+      <div class="appbar">
+        <span class="brand">ClipDuel</span>
+        <div class="tabs"><span class="on">Make clips</span><span>Make videos</span><span>Schedule</span></div>
+      </div>
+      <div class="job">
+        <div class="job-head"><strong>podcast-ep12-full.mp4</strong><span class="mono small muted">3 clips · started 2:41 ago</span></div>
+        <div class="stages">
+          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Upload</span><span class="sub">1.3 GB · cached</span></div>
+          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Transcribe</span><span class="sub">7,904 words</span></div>
+          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Find moments</span><span class="sub">6 windows · 3 kept</span></div>
+          <div class="stage active"><div class="bar"><b></b></div><span class="lbl">Render</span><span class="sub">clip 2 of 3</span></div>
+        </div>
+<div class="log">[12:04] "Fewer ideas, better ideas"   score 91   0:42 long
+[27:31] "The 5-minute rule"            score 86   0:38 long
+[39:10] "Why I quit posting daily"     score 84   0:51 long</div>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 4 -->
+<section class="step" id="review">
+  <div class="step-copy">
+    <span class="step-num">STEP 4 OF 6</span>
+    <h2>Watch what it picked</h2>
+    <p>Each clip shows why it was chosen: its title, its score out of 100, and where it sits in the original video. Play any clip right on the card.</p>
+    <ul>
+      <li><b>Post</b> publishes now to Instagram Reels, TikTok, or both.</li>
+      <li><b>Schedule</b> adds the clip to your one-a-day queue.</li>
+      <li><b>⋯ → Other style</b> re-renders just that clip in a different caption style, for when one moment needs a different look.</li>
+    </ul>
+  </div>
+  <figure class="frame" aria-label="Mockup: finished clips">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / make</div></div>
+    <div class="app">
+      <div class="appbar">
+        <span class="brand">ClipDuel</span>
+        <div class="tabs"><span class="on">Make clips</span><span>Make videos</span><span>Schedule</span></div>
+        <span class="gear"><span class="pill-ok" style="margin:0">DONE · 3 CLIPS</span></span>
+      </div>
+      <div class="moments">
+        <div class="moment">
+          <div class="clip s1 p-bold" data-cap="You don't need more ideas, you need fewer"><div class="person" aria-hidden="true"></div></div>
+          <h4>Fewer ideas, better ideas</h4>
+          <div class="facts"><span class="score">91</span><span>12:04–12:46</span></div>
+          <div class="acts"><span class="btn sm">Post</span><span class="btn ghost sm">Schedule</span><span class="btn ghost sm" aria-label="More">⋯</span></div>
+        </div>
+        <div class="moment">
+          <div class="clip s2 p-bold" data-cap="Give it five minutes and the resistance fades"><div class="person" aria-hidden="true"></div></div>
+          <h4>The 5-minute rule</h4>
+          <div class="facts"><span class="score">86</span><span>27:31–28:09</span></div>
+          <div class="acts"><span class="btn sm">Post</span><span class="btn ghost sm">Schedule</span><span class="btn ghost sm" aria-label="More">⋯</span></div>
+        </div>
+        <div class="moment">
+          <div class="clip s3 p-bold" data-cap="Posting daily made me worse at posting"><div class="person" aria-hidden="true"></div></div>
+          <h4>Why I quit posting daily</h4>
+          <div class="facts"><span class="score">84</span><span>39:10–40:01</span></div>
+          <div class="acts"><span class="btn sm">Post</span><span class="btn ghost sm">Schedule</span><span class="btn ghost sm" aria-label="More">⋯</span></div>
+        </div>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 5 -->
+<section class="step" id="post">
+  <div class="step-copy">
+    <span class="step-num">STEP 5 OF 6</span>
+    <h2>Post it, or queue it</h2>
+    <p>Write one caption, pick your platforms, and choose whether it goes out now or joins the daily queue. The same form does both, so there's nothing new to learn.</p>
+    <ul>
+      <li>Only platforms you've connected can be selected.</li>
+      <li>A post is sent exactly once. If something fails, you retry it yourself, so the same clip never goes out twice.</li>
+    </ul>
+    <p class="note">Posting needs your Instagram and TikTok tokens plus a public URL set in the app's config. Until then, the Post button explains what's missing.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: post composer">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / make</div></div>
+    <div class="scrim">
+      <div class="sheet">
+        <div class="clip s1 p-bold" data-cap="You don't need more ideas, you need fewer"><div class="person" aria-hidden="true"></div></div>
+        <div class="body">
+          <h3>Post “Fewer ideas, better ideas”</h3>
+          <div class="checks">
+            <span class="chk on"><span class="box">✓</span>Instagram Reels</span>
+            <span class="chk on"><span class="box">✓</span>TikTok</span>
+          </div>
+          <label class="field">Caption
+            <div class="textarea">Stop collecting ideas. Start finishing one. 🎙 Full ep 12 in bio</div>
+          </label>
+          <div class="count">62 / 2,200</div>
+          <div class="row" style="justify-content:flex-end">
+            <span class="btn ghost sm">Add to daily queue</span>
+            <span class="btn sm">Post now</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 6 -->
+<section class="step" id="schedule">
+  <div class="step-copy">
+    <span class="step-num">STEP 6 OF 6</span>
+    <h2>Let the queue post one a day</h2>
+    <p>Turn the daily queue on, pick a time, and it posts the oldest clip in the queue once a day. Posted clips leave the queue. If the queue is empty, nothing posts.</p>
+    <ul>
+      <li>First in, first out. Remove any clip before it goes out.</li>
+      <li>Change the time at any point. The next post follows the new time.</li>
+    </ul>
+  </div>
+  <figure class="frame" aria-label="Mockup: schedule screen">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / schedule</div></div>
+    <div class="app">
+      <div class="appbar">
+        <span class="brand">ClipDuel</span>
+        <div class="tabs"><span>Make clips</span><span>Make videos</span><span class="on">Schedule</span></div>
+      </div>
+      <div class="sched">
+        <div class="setrow">
+          <span class="toggle" aria-label="Daily queue on"></span>
+          <strong>Post one clip a day at</strong>
+          <span class="input mono">09:00</span>
+          <span class="muted small">your computer's time zone</span>
+        </div>
+        <ul class="q">
+          <li class="next"><span class="when">Tomorrow</span><span class="mini clip s1"></span><span class="t">Fewer ideas, better ideas</span><span class="plat">IG · TT</span></li>
+          <li><span class="when">Sat 27</span><span class="mini clip s2"></span><span class="t">The 5-minute rule</span><span class="plat">IG · TT</span></li>
+          <li><span class="when">Sun 28</span><span class="mini clip s3"></span><span class="t">Why I quit posting daily</span><span class="plat">TT</span></li>
+          <li><span class="when">Mon 29</span><span class="mini clip s4"></span><span class="t">Ep 11 · The cold open that worked</span><span class="plat">IG</span></li>
+        </ul>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<section class="retired" aria-labelledby="retired-h">
+  <div style="display:grid;gap:10px">
+    <span class="eyebrow">What a new user won't see</span>
+    <h2 id="retired-h">Three things folded away</h2>
+    <p class="muted" style="max-width:62ch">The old app had four tabs and three creation modes. It now has three tabs and two modes. The rest is removed, folded in, or hidden behind a flag, and your existing clips and votes are kept either way.</p>
+  </div>
+  <div class="gone-grid">
+    <div class="gone"><span class="chip fold">Folded into quick picks</span><h3>Vote tab</h3><p>Voting now happens where you work: the three-pick caption setup for clips, and a blind “pick your favorite” on each video job. There's no longer an endless stream of pairs to judge.</p></div>
+    <div class="gone"><span class="chip cut">Removed</span><h3>Results &amp; leaderboards</h3><p>Your picks become your defaults: a caption style for clips, and your last favorite look for videos. No ranking table needed.</p></div>
+    <div class="gone"><span class="chip lab">Labs · off by default</span><h3>Video → animate</h3><p>AI-animated segments stay behind a flag until the pending quality checks pass.</p></div>
+  </div>
+  <p class="foot">Mockups show the proposed streamlined app, not the current build. Clip titles, scores, and timestamps are illustrative. The caption styles shown are the app's four real presets: Bold Pop, Clean Lower-Third, Pill Punch, and Caps Classic.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var groups = [];
+  document.querySelectorAll('.clip[data-cap]').forEach(function(clip){
+    var cap = document.createElement('div');
+    cap.className = 'cap';
+    var holder = cap;
+    if (clip.classList.contains('p-clean')) { holder = document.createElement('span'); holder.className = 'band'; cap.appendChild(holder); }
+    var words = clip.getAttribute('data-cap').split(' ').map(function(t, i){
+      var s = document.createElement('span');
+      s.className = 'w' + (i === 0 ? ' on' : '');
+      s.textContent = t;
+      holder.appendChild(s);
+      holder.appendChild(document.createTextNode(' '));
+      return s;
+    });
+    clip.appendChild(cap);
+    groups.push({ words: words, i: 0 });
+  });
+  if (reduce) return;
+  setInterval(function(){
+    groups.forEach(function(g){
+      g.words[g.i].classList.remove('on');
+      g.i = (g.i + 1) % g.words.length;
+      g.words[g.i].classList.add('on');
+    });
+  }, 420);
+})();
+</script>
+
+</body>
+</html>

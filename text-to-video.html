@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>ClipDuel Text to Video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F1F2F6; --surface:#FFFFFF; --surface-2:#F7F8FB; --ink:#161922; --muted:#5B6173;
+  --line:#DADDE6; --accent:#F4C20D; --accent-ink:#161922; --accent-soft:#FFF4C7; --btn:#1E2240; --btn-ink:#FFFFFF;
+  --ok:#1F8A5B; --ok-bg:#E3F4EC; --warn:#A86A00; --warn-bg:#FFF3D6; --bad:#B4405A; --bad-bg:#FBE8ED;
+  --frame-bar:#E6E8EF; --shadow:0 1px 2px rgba(22,25,34,.06),0 8px 24px rgba(22,25,34,.08);
+  --edge:#B7BCCB; --node:#FFFFFF; --node-line:#C9CDD9;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#111319; --surface:#1A1D27; --surface-2:#20242F; --ink:#ECEEF4; --muted:#9BA2B5;
+    --line:#2D3242; --accent-soft:#3A3212; --btn:#F4C20D; --btn-ink:#161922; --frame-bar:#252936;
+    --ok:#5BD19A; --ok-bg:#16301F; --warn:#F2B33D; --warn-bg:#33270F; --bad:#F07F98; --bad-bg:#35161E;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+    --edge:#454B5E; --node:#1F2330; --node-line:#3A4054;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#111319; --surface:#1A1D27; --surface-2:#20242F; --ink:#ECEEF4; --muted:#9BA2B5;
+  --line:#2D3242; --accent-soft:#3A3212; --btn:#F4C20D; --btn-ink:#161922; --frame-bar:#252936;
+  --ok:#5BD19A; --ok-bg:#16301F; --warn:#F2B33D; --warn-bg:#33270F; --bad:#F07F98; --bad-bg:#35161E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  --edge:#454B5E; --node:#1F2330; --node-line:#3A4054;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:16px/1.6 var(--body);padding-inline:20px;padding-block:0 64px}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
+p{margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:12.5px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* hero */
+.hero{padding-block:56px 36px;display:grid;gap:20px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-size:clamp(40px,7vw,76px);font-weight:900;font-stretch:112%;letter-spacing:-.01em;max-width:15ch}
+.hl{background:linear-gradient(transparent 12%,var(--accent) 12%,var(--accent) 88%,transparent 88%);color:var(--accent-ink);padding-inline:.12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero .lede{font-size:19px;max-width:62ch;color:var(--muted)}
+.facts{display:flex;flex-wrap:wrap;gap:8px 20px;font:13px/1.4 var(--mono);color:var(--muted)}
+.facts b{color:var(--ink);font-weight:500}
+.eyebrow a{color:var(--ink);text-underline-offset:3px}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px}
+.flow a{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);border-radius:999px;text-decoration:none;font-weight:500;font-size:14px}
+.flow a:hover{border-color:var(--ink)}
+.flow .n{font:500 11px/1 var(--mono);color:var(--muted)}
+.flow .opt{font:500 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border:1px solid var(--line);padding:3px 5px;border-radius:4px}
+.flow .arrow{color:var(--muted);font-size:14px}
+
+/* steps */
+.step{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start;padding-block:48px;border-top:1px solid var(--line);scroll-margin-top:16px}
+.step-copy{display:grid;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px)}
+.step-num{font:600 13px/1 var(--mono);color:var(--muted);letter-spacing:.06em}
+.step h2,.sec h2{font-size:clamp(28px,3.4vw,40px);font-weight:850;font-stretch:108%}
+.step p{max-width:52ch}
+.step ul{margin:0;padding-left:1.1em;display:grid;gap:6px;max-width:52ch}
+.step li::marker{color:var(--muted)}
+.note{font-size:14px;color:var(--muted);border-left:3px solid var(--accent);padding:2px 0 2px 12px;max-width:52ch}
+.tag{display:inline-block;font:500 11px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;padding:4px 7px;border-radius:4px;vertical-align:middle;border:1px solid var(--line);color:var(--muted)}
+@media (max-width:860px){.step{grid-template-columns:1fr;gap:24px}.step-copy{position:static}}
+
+/* frame */
+.frame{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.chrome{display:flex;align-items:center;gap:10px;background:var(--frame-bar);padding:9px 12px;border-bottom:1px solid var(--line)}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+.url{flex:1;min-width:0;font:12px/1 var(--mono);color:var(--muted);background:var(--surface);border-radius:6px;padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app{padding:18px;display:grid;gap:14px}
+.appbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font:900 18px/1 var(--display);font-stretch:115%}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs span{font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:6px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
+.tabs span.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 14px/1 var(--body);padding:10px 14px;border-radius:8px;background:var(--btn);color:var(--btn-ink);border:0}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:6px 9px;font-size:12px}
+.field{display:grid;gap:6px;font-size:13px;color:var(--muted)}
+.ta{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:10px 12px;color:var(--ink);font-size:14px;line-height:1.5;min-height:92px}
+.counter{font:12px/1 var(--mono);color:var(--muted)}
+.radios{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13.5px}
+.radio{display:inline-flex;align-items:center;gap:7px}
+.radio i{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center}
+.radio.on i::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--ink)}
+.seg{display:inline-flex;gap:4px;align-items:center;font-size:13px;color:var(--muted)}
+.seg span{width:30px;height:28px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;font:600 13px var(--mono);color:var(--ink)}
+.seg span.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.trow{display:grid;grid-template-columns:18px repeat(4,minmax(0,1fr));gap:6px;align-items:center}
+.trow .i{font:12px var(--mono);color:var(--muted)}
+.sel{border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:6px 8px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sel.diff{border-color:var(--ink);background:var(--accent-soft)}
+@media (max-width:560px){.trow{grid-template-columns:18px 1fr 1fr}.trow .sel:nth-child(n+4){display:none}}
+.foot{font-size:12.5px;color:var(--muted)}
+.filerow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.filerow .lbl{font-size:13.5px;font-weight:600}
+.chip{font:12px/1 var(--mono);padding:6px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line)}
+.hint{font-size:12.5px;color:var(--muted);flex-basis:100%}
+.slider{display:inline-flex;align-items:center;gap:8px;font:12px var(--mono);color:var(--muted)}
+.slider .track{width:120px;height:4px;border-radius:2px;background:var(--line);position:relative}
+.slider .track b{position:absolute;left:0;top:0;bottom:0;background:var(--ink);border-radius:2px}
+.slider .track b::after{content:"";position:absolute;right:-7px;top:-5px;width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--ink)}
+.check{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600}
+.check i{width:15px;height:15px;border-radius:3px;background:var(--ink);color:var(--surface);display:grid;place-items:center;font-size:10px;font-style:normal}
+.status-ok{font:500 11px/1 var(--mono);color:var(--ok);background:var(--ok-bg);padding:5px 7px;border-radius:4px}
+
+/* ------- scene art: 9:16 frames with baked captions ------- */
+.scene{position:relative;aspect-ratio:9/16;max-width:100%;border-radius:10px;overflow:hidden;isolation:isolate}
+.scene .bg{position:absolute;inset:0;z-index:-2}
+.scene svg.cat{position:absolute;left:14%;right:14%;top:30%;width:72%;height:auto;z-index:-1}
+.scene .cap{position:absolute;left:6%;right:6%;bottom:9%;text-align:center;line-height:1.2}
+.scene .acc{display:inline}
+/* claymation */
+.v-clay .bg{background:radial-gradient(70% 40% at 50% 30%,#F6DDB9,transparent 70%),linear-gradient(180deg,#E9B98B 0%,#C98763 60%,#8F5A42 100%)}
+.v-clay svg.cat{filter:drop-shadow(0 6px 4px rgba(80,40,20,.35))}
+.v-clay{--cat-body:#FBF4EA;--cat-patch:#9A948E;--cat-line:#6B4A3A;--cat-eye:#E39B2B}
+.v-clay .cap{font:800 clamp(11px,1.45vw,14px)/1.2 var(--display);color:#FFF8EE;text-shadow:0 2px 0 #7A4A33,0 0 4px rgba(0,0,0,.35)}
+.v-clay .acc{color:#FFD27A}
+/* watercolor */
+.v-water .bg{background:radial-gradient(45% 30% at 30% 25%,rgba(150,190,220,.75),transparent 70%),radial-gradient(50% 35% at 70% 55%,rgba(240,190,160,.6),transparent 70%),radial-gradient(60% 30% at 40% 85%,rgba(140,180,170,.6),transparent 70%),#F7F3EA}
+.v-water{--cat-body:#FFFFFF;--cat-patch:#A5A7B4;--cat-line:#5E6C86;--cat-eye:#E0A040}
+.v-water svg.cat{opacity:.92}
+.v-water .cap{font:600 italic clamp(11px,1.4vw,13.5px)/1.25 Georgia,"Times New Roman",serif;color:#2E3A52}
+.v-water .acc{color:#B0522F}
+/* synthwave (style reference) */
+.v-synth .bg{background:
+  linear-gradient(transparent 62%,rgba(0,0,0,0) 62%),
+  repeating-linear-gradient(90deg,rgba(80,230,255,.55) 0 1px,transparent 1px 22px) 0 64%/100% 36% no-repeat,
+  repeating-linear-gradient(0deg,rgba(80,230,255,.55) 0 1px,transparent 1px 14px) 0 64%/100% 36% no-repeat,
+  radial-gradient(circle at 50% 44%,#FFB347 0 17%,transparent 17.3%),
+  linear-gradient(180deg,#2A0F4F 0%,#7B1F7A 38%,#E0457B 58%,#1B0B33 62%,#12081F 100%)}
+.v-synth .bg::after{content:"";position:absolute;left:0;right:0;top:32%;height:25%;background:repeating-linear-gradient(0deg,#9B2C85 0 3px,transparent 3px 9px);-webkit-mask:radial-gradient(circle at 50% 48%,#000 0 36%,transparent 36.5%);mask:radial-gradient(circle at 50% 48%,#000 0 36%,transparent 36.5%)}
+.v-synth{--cat-body:#F7EFFF;--cat-patch:#8E86A8;--cat-line:#FF4FD8;--cat-eye:#FFB347}
+.v-synth svg.cat{filter:drop-shadow(0 0 3px #3FE6FF) drop-shadow(0 0 6px rgba(255,79,216,.6))}
+.v-synth .cap{font:600 clamp(11px,1.4vw,13.5px)/1.25 Helvetica,Arial,sans-serif;color:#F4F4F8;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.v-synth .acc{color:#F5B83D}
+/* photo (character reference) */
+.v-photo .bg{background:radial-gradient(60% 40% at 55% 35%,#DCD3C4,transparent 70%),linear-gradient(170deg,#8C8378,#5E574F 70%,#3E3a35)}
+.v-photo{--cat-body:#F4F1EC;--cat-patch:#8B8782;--cat-line:#3D3934;--cat-eye:#D99A2E}
+.v-photo svg.cat{top:22%}
+
+/* style swatches */
+.swatches{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+@media (max-width:860px){.swatches{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sw{display:grid;gap:6px;font-size:12.5px;font-weight:600}
+.sw .t{aspect-ratio:9/16;border-radius:8px;border:1px solid var(--line);overflow:hidden;position:relative}
+.sw small{font:400 11px/1.3 var(--mono);color:var(--muted)}
+.t-clay{background:radial-gradient(35% 22% at 50% 45%,#FBF4EA 0 60%,transparent 62%),radial-gradient(60% 40% at 50% 30%,#F6DDB9,transparent 70%),linear-gradient(180deg,#E9B98B,#8F5A42)}
+.t-vox{background:radial-gradient(circle at 40% 40%,#9CC7FF 0 10%,#2B63D9 22%,transparent 23%),radial-gradient(circle at 65% 62%,#9CC7FF 0 8%,#1E48A8 18%,transparent 19%),linear-gradient(180deg,#0C1D4A,#1E3A8A)}
+.t-water{background:radial-gradient(45% 30% at 30% 30%,rgba(150,190,220,.8),transparent 70%),radial-gradient(50% 35% at 70% 65%,rgba(240,190,160,.7),transparent 70%),#F7F3EA}
+.t-ink{background:repeating-linear-gradient(45deg,#1b1b1b 0 1px,transparent 1px 6px) 30% 40%/50% 30% no-repeat,radial-gradient(circle at 50% 35%,transparent 0 18%,#1b1b1b 18.5% 19.5%,transparent 20%),#FAF8F2}
+.t-half{background:radial-gradient(circle,#E0457B 0 2.2px,transparent 2.6px) 0 0/8px 8px,radial-gradient(circle,#1E2240 0 1.6px,transparent 2px) 4px 4px/8px 8px,#FFF6E0}
+.t-schem{background:linear-gradient(rgba(255,255,255,.18) 1px,transparent 1px) 0 0/12px 12px,linear-gradient(90deg,rgba(255,255,255,.18) 1px,transparent 1px) 0 0/12px 12px,radial-gradient(circle at 50% 40%,transparent 0 20%,#fff 20.5% 21.5%,transparent 22%),#1F4E8C}
+.t-line{background:radial-gradient(circle at 50% 38%,transparent 0 18%,#222 18.5% 20%,transparent 20.5%),linear-gradient(#222,#222) 20% 70%/60% 2px no-repeat,#EAF2EE}
+.t-econ{background:linear-gradient(#1F8A5B,#1F8A5B) 18% 100%/12% 35% no-repeat,linear-gradient(#F4C20D,#F4C20D) 44% 100%/12% 55% no-repeat,linear-gradient(#E0457B,#E0457B) 70% 100%/12% 75% no-repeat,linear-gradient(#FFFFFF,#EEF0F4)}
+.t-ref{background:repeating-linear-gradient(135deg,var(--surface-2) 0 8px,var(--line) 8px 9px);display:grid;place-items:center;font:500 10px/1.2 var(--mono);color:var(--muted);text-align:center;padding:6px}
+
+/* reference strip */
+.refstrip{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center}
+.refstrip .arrow{text-align:center;color:var(--muted);font-size:20px}
+.refstrip figure{margin:0;display:grid;gap:6px}
+.refstrip figcaption{font:11.5px/1.3 var(--mono);color:var(--muted);text-align:center}
+.desc{font:12px/1.55 var(--mono);color:var(--muted);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre-wrap}
+.desc b{color:var(--ink);font-weight:500}
+
+/* job card */
+.job{border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:12px}
+.job-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.refs{display:flex;gap:6px;margin-left:auto}
+.refs .thumb{width:34px;height:34px;border-radius:6px;overflow:hidden;position:relative;border:1px solid var(--line)}
+.refs .thumb .scene{border-radius:0;aspect-ratio:1}
+.preview{font-size:13px;line-height:1.5;border-left:3px solid var(--line);padding-left:10px;color:var(--muted)}
+.preview b{color:var(--ink)}
+.preview.ai{border-left-color:var(--accent)}
+.vids{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.vids figure{margin:0;display:grid;gap:6px}
+.vids figcaption{font:11px/1.3 var(--mono);color:var(--muted)}
+
+/* sections */
+.sec{border-top:1px solid var(--line);padding-block:48px;display:grid;gap:22px}
+.sec > p{max-width:66ch}
+.sec h3{font-size:20px;font-weight:800}
+
+/* live storyboard */
+.sb{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px;align-items:start}
+@media (max-width:860px){.sb{grid-template-columns:1fr}}
+.sb textarea{width:100%;min-height:220px;resize:vertical;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:12px 14px;font:14.5px/1.55 var(--body)}
+.sb-meta{display:flex;gap:14px;flex-wrap:wrap;font:12.5px var(--mono);color:var(--muted);margin-top:8px}
+.sb-meta b{color:var(--ink);font-weight:500}
+.scenes{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:sc}
+.scenes li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:14px}
+.scenes .ix{font:12px var(--mono);color:var(--muted)}
+.scenes mark{background:var(--accent);color:var(--accent-ink);padding:0 .15em;border-radius:2px}
+.scenes .d{font:11.5px var(--mono);color:var(--muted);white-space:nowrap}
+.scenes .why{grid-column:2/-1;font:11px var(--mono);color:var(--muted)}
+
+/* pipeline diagram */
+.sys{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.sys-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.sys-controls button{font:600 13px/1 var(--body);padding:8px 12px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.sys-controls button.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.steps-dots{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap}
+.steps-dots button{width:28px;height:26px;padding:0;font:600 11.5px/1 var(--mono)}
+.steps-dots button[aria-current="step"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.sys-canvas{overflow-x:auto}
+.sys svg{display:block;width:100%;min-width:760px;height:auto}
+.sys .n rect{fill:var(--node);stroke:var(--node-line);stroke-width:1.2;transition:stroke .25s,fill .25s}
+.sys .n text{fill:var(--ink);font:600 12px var(--body)}
+.sys .n text.s{fill:var(--muted);font:10.5px var(--mono)}
+.sys .n.active rect{stroke:var(--ink);stroke-width:2.2;fill:var(--accent-soft)}
+.sys .grp{fill:none;stroke:var(--line);stroke-dasharray:3 4}
+.sys .grp-t{fill:var(--muted);font:600 10px var(--mono);letter-spacing:.1em}
+.sys path.e{fill:none;stroke:var(--edge);stroke-width:1.5;transition:stroke .25s}
+.sys path.e.active{stroke:var(--ink);stroke-width:2.4}
+.sys .token{fill:var(--accent);stroke:var(--ink);stroke-width:1.5}
+.sys-caption{padding:14px 16px;border-top:1px solid var(--line);display:grid;gap:6px;min-height:150px}
+.sys-caption .t{font-weight:700}
+.sys-caption pre{margin:4px 0 0;font:12.5px/1.55 var(--mono);white-space:pre-wrap;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--muted)}
+
+/* rules table */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font:600 11.5px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface-2)}
+td .why{color:var(--muted);font-size:13px}
+.cost{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.cost{grid-template-columns:1fr}}
+.cost div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:4px}
+.cost b{font:800 26px/1 var(--display);font-variant-numeric:tabular-nums}
+.cost span{font-size:13.5px;color:var(--muted)}
+.foot-note{font-size:13px;color:var(--muted);max-width:74ch}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="cat" viewBox="0 0 100 100">
+    <path d="M74 80 C92 78 96 60 86 52" fill="none" stroke="var(--cat-body)" stroke-width="7" stroke-linecap="round"/>
+    <path d="M74 80 C92 78 96 60 86 52" fill="none" stroke="var(--cat-line)" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+    <ellipse cx="50" cy="74" rx="27" ry="19" fill="var(--cat-body)" stroke="var(--cat-line)" stroke-width="1.2"/>
+    <ellipse cx="57" cy="68" rx="15" ry="9" fill="var(--cat-patch)"/>
+    <polygon points="35,34 37,15 48,27" fill="var(--cat-body)" stroke="var(--cat-line)" stroke-width="1.2" stroke-linejoin="round"/>
+    <polygon points="65,34 63,15 52,27" fill="var(--cat-body)" stroke="var(--cat-line)" stroke-width="1.2" stroke-linejoin="round"/>
+    <circle cx="50" cy="41" r="17" fill="var(--cat-body)" stroke="var(--cat-line)" stroke-width="1.2"/>
+    <path d="M56 26 C64 28 67 36 66 42 C60 38 57 32 56 26Z" fill="var(--cat-patch)"/>
+    <ellipse cx="43.5" cy="40" rx="2.6" ry="3.2" fill="var(--cat-eye)"/><ellipse cx="56.5" cy="40" rx="2.6" ry="3.2" fill="var(--cat-eye)"/>
+    <circle cx="43.5" cy="40" r="1.1" fill="#1a1a1a"/><circle cx="56.5" cy="40" r="1.1" fill="#1a1a1a"/>
+    <path d="M48 46 L50 48 L52 46" fill="none" stroke="var(--cat-line)" stroke-width="1.2" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">ClipDuel · Make videos · <a href="first-run.html">← back to the first-run guide</a></span>
+  <h1>Write a paragraph. Get <span class="hl">up to four styled videos</span> of it.</h1>
+  <p class="lede">Paste a script, or a one-line brief that AI turns into a script. ClipDuel storyboards it into scenes, draws each scene, narrates it, and assembles a captioned video. Add a photo and your own character stars in every scene. Add an image and the art takes on its style.</p>
+  <div class="facts">
+    <span><b>Input</b> 3–450 words</span>
+    <span><b>Output</b> 1–4 MP4s, portrait · square · landscape</span>
+    <span><b>Cost</b> $0 local · ≈$0.03 per AI video</span>
+    <span><b>Tab</b> Make videos</span>
+  </div>
+  <nav class="flow" aria-label="Steps">
+    <a href="#write"><span class="n">1</span>Write</a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#looks"><span class="n">2</span>Pick looks</a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#character"><span class="n">3</span>Add a character <span class="opt">optional</span></a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#style"><span class="n">4</span>Match an art style <span class="opt">optional</span></a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#sound"><span class="n">5</span>Set the sound</a><span class="arrow" aria-hidden="true">→</span>
+    <a href="#render"><span class="n">6</span>Render &amp; pick</a>
+  </nav>
+</header>
+
+<!-- STEP 1 -->
+<section class="step" id="write">
+  <div class="step-copy">
+    <span class="step-num">STEP 1 OF 6</span>
+    <h2>Write the script, or just the idea</h2>
+    <p>Choose what your text is.</p>
+    <ul>
+      <li><b>The script:</b> narrated word for word. The counter estimates each video's length.</li>
+      <li><b>A brief:</b> AI writes a 60–120-word narration script from it. That script then drives everything: scenes, captions, voice, and imagery.</li>
+    </ul>
+    <p class="note">The script is written once per job and saved, so every video in the job narrates the same words. That keeps side-by-side comparisons fair.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: text input and script mode">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / videos</div></div>
+    <div class="app">
+      <div class="appbar"><span class="brand">ClipDuel</span><div class="tabs"><span>Make clips</span><span class="on">Make videos</span><span>Schedule</span></div></div>
+      <div class="ta">A harbor cat waits on the pier while the fishing boats go out at dawn, and is still there when they come home.</div>
+      <span class="counter">22 / 450 words</span>
+      <div class="radios"><span class="muted">My text is:</span>
+        <span class="radio"><i></i>the script — read it verbatim</span>
+        <span class="radio on"><i></i>a brief — AI writes the script ✨</span>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 2 -->
+<section class="step" id="looks">
+  <div class="step-copy">
+    <span class="step-num">STEP 2 OF 6</span>
+    <h2>Pick a look for each video</h2>
+    <p>Make 1 to 4 videos from the same text. Each one gets four settings.</p>
+    <ul>
+      <li><b>Style:</b> one of eight presets, or <i>Style reference</i> (step 4).</li>
+      <li><b>Aspect:</b> portrait, landscape, or square.</li>
+      <li><b>Voice:</b> a voice on your Mac, or an OpenAI voice ✨.</li>
+      <li><b>Imagery:</b> procedural (drawn locally, free) or AI imagery ✨.</li>
+    </ul>
+    <p class="note">When your videos differ in exactly one setting, like the highlighted style column here, your pick in step 6 tells you which value of that setting you prefer. If they differ in more than one, it only tells you which whole video you liked.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: video treatment rows">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / videos</div></div>
+    <div class="app">
+      <div class="seg">Videos: <span>1</span><span>2</span><span class="on">3</span><span>4</span></div>
+      <div class="trow"><span class="i">1.</span><span class="sel diff">Claymation</span><span class="sel">portrait</span><span class="sel">nova ✨</span><span class="sel">AI imagery ✨</span></div>
+      <div class="trow"><span class="i">2.</span><span class="sel diff">🖼️ Style reference</span><span class="sel">portrait</span><span class="sel">nova ✨</span><span class="sel">AI imagery ✨</span></div>
+      <div class="trow"><span class="i">3.</span><span class="sel diff">Watercolor</span><span class="sel">portrait</span><span class="sel">nova ✨</span><span class="sel">AI imagery ✨</span></div>
+      <p class="foot">Each video is rendered locally: storyboard, styled scenes, voiceover, captions. AI treatments call OpenAI for imagery, script, and narration (pennies per video). You'll pick a favorite once they render.</p>
+    </div>
+  </figure>
+</section>
+
+<section class="sec" aria-labelledby="styles-h" style="padding-top:0;border-top:0">
+  <h3 id="styles-h">The eight preset styles, plus your own</h3>
+  <div class="swatches">
+    <div class="sw"><div class="t t-clay"></div>Claymation<small>soft clay diorama</small></div>
+    <div class="sw"><div class="t t-vox"></div>Blue Vox<small>3D figures</small></div>
+    <div class="sw"><div class="t t-water"></div>Watercolor<small>washes, serif</small></div>
+    <div class="sw"><div class="t t-ink"></div>Pen &amp; Ink<small>hatching</small></div>
+    <div class="sw"><div class="t t-half"></div>Halftone<small>print dots</small></div>
+    <div class="sw"><div class="t t-schem"></div>Schematic<small>blueprint</small></div>
+    <div class="sw"><div class="t t-line"></div>2D Line<small>flat outline</small></div>
+    <div class="sw"><div class="t t-econ"></div>Economic<small>infographic</small></div>
+  </div>
+  <p class="foot-note">Swatches suggest each preset's mood; they are not renders. With procedural imagery, a preset draws seeded SVG motifs for free. With AI imagery, the preset's art-direction text steers the image model. Each preset also carries its own caption typography.</p>
+</section>
+
+<!-- STEP 3 -->
+<section class="step" id="character">
+  <div class="step-copy">
+    <span class="step-num">STEP 3 OF 6 · <span class="tag">optional</span></span>
+    <h2>Put your character in every scene</h2>
+    <p>Upload a photo of your subject: a pet, a product, a mascot. Every AI-imagery scene re-draws that subject in the video's art style, and it stays consistent from scene to scene.</p>
+    <ul>
+      <li>A vision model first describes the subject's appearance, and only its appearance, never its pose or surroundings.</li>
+      <li>Each scene image is generated with the photo attached. The scene writer must repeat that description word for word and is barred from inventing features.</li>
+      <li>Needs at least one video set to AI imagery, or the job is rejected.</li>
+    </ul>
+    <p class="note">The describe-first step fixes a real bug. Without it, the text-only scene writer made up a different cat for each style, and that text outweighed the photo.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: character reference upload and results">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / videos</div></div>
+    <div class="app">
+      <div class="filerow"><span class="lbl">Character reference (optional):</span><span class="btn ghost sm">Choose file</span><span class="chip">mochi.jpg · 2.1 MB</span>
+        <span class="hint">AI imagery re-renders this subject (your cat, your product…) in the chosen style, in every scene</span></div>
+      <div class="refstrip">
+        <figure><div class="scene v-photo"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg></div><figcaption>your photo</figcaption></figure>
+        <span class="arrow" aria-hidden="true">→</span>
+        <figure><div class="scene v-clay"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg><div class="cap">The boats wait, <span class="acc">patient</span> as old dogs.</div></div><figcaption>Claymation</figcaption></figure>
+        <figure><div class="scene v-water"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg><div class="cap">The boats wait, <span class="acc">patient</span> as old dogs.</div></div><figcaption>Watercolor</figcaption></figure>
+      </div>
+<div class="desc"><b>subject description (vision, cached)</b>
+A small cat with a white body and a gray tabby saddle across the back and the top of the head, short fur, and amber eyes.</div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 4 -->
+<section class="step" id="style">
+  <div class="step-copy">
+    <span class="step-num">STEP 4 OF 6 · <span class="tag">optional</span></span>
+    <h2>Borrow the art style of any image</h2>
+    <p>Upload a second image that shows the look you want. Then set one or more videos' style to <b>Style reference</b>. It sits in the same menu as the eight presets, so you can put Claymation side by side with your own style.</p>
+    <ul>
+      <li>A vision model describes only the image's <i>style</i>: medium, palette, texture, line, and lighting. Naming its subjects is explicitly banned.</li>
+      <li>That description replaces the preset's art direction. The image itself isn't sent to the image model.</li>
+      <li>Captions switch to a neutral set (Helvetica, light fill, amber accent), since the art direction is yours.</li>
+    </ul>
+    <p class="note">Works with the character reference. In the live acceptance test, a cat photo plus a synthwave image produced the same cat against a purple dusk, a striped sun, and a cyan grid.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: style reference upload and result">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / videos</div></div>
+    <div class="app">
+      <div class="filerow"><span class="lbl">Style reference (optional):</span><span class="btn ghost sm">Choose file</span><span class="chip">synthwave.png</span>
+        <span class="hint">AI scenes are rendered in this image's art style. Pick “Style reference” as a video's style to use it.</span></div>
+      <div class="refstrip">
+        <figure><div class="scene v-synth"><div class="bg"></div></div><figcaption>your style image</figcaption></figure>
+        <span class="arrow" aria-hidden="true">→</span>
+        <figure><div class="scene v-synth"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg><div class="cap">When the wind <span class="acc">shifts</span>, they move. She stays.</div></div><figcaption>Style reference</figcaption></figure>
+        <figure><div class="scene v-clay"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg><div class="cap">When the wind <span class="acc">shifts</span>, they move. She stays.</div></div><figcaption>Claymation</figcaption></figure>
+      </div>
+<div class="desc"><b>style description (vision, cached)</b>
+Retro synthwave digital illustration: deep purple to magenta dusk gradient, neon rim lighting, glowing cyan perspective grid, flat gradient shading, crisp vector edges.</div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 5 -->
+<section class="step" id="sound">
+  <div class="step-copy">
+    <span class="step-num">STEP 5 OF 6</span>
+    <h2>Set the voice and the music</h2>
+    <ul>
+      <li><b>Narration</b> is on by default at 100%. Turn it off for a captions-only video. Scene timing then comes from word count (2.5 words per second), and the voice pickers are disabled.</li>
+      <li><b>Background music</b> is optional: MP3, M4A, or WAV up to 15 MB, 40% by default. It loops to fit the video, fades out over the last 2 seconds, and sits under the narration at your exact slider levels.</li>
+    </ul>
+    <p class="note">With narration off, videos that differ only in voice would render identically, so that combination is rejected at submit.</p>
+  </div>
+  <figure class="frame" aria-label="Mockup: narration and music controls">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / videos</div></div>
+    <div class="app">
+      <div class="filerow"><span class="check"><i>✓</i>Narration</span><span class="slider"><span class="track"><b style="width:100%"></b></span>100%</span></div>
+      <div class="filerow"><span class="lbl">Background music (optional):</span><span class="chip">♪ harbor-lofi.mp3</span><span class="slider"><span class="track"><b style="width:40%"></b></span>40%</span><span class="btn ghost sm">remove</span></div>
+<div class="desc"><b>mix, per video</b>
+narration ×1.00 ─┐
+                 ├─ amix (normalize off) ─→ ends with the narration
+music    ×0.40 ─┘   looped · 2 s fade-out · no ducking</div>
+    </div>
+  </figure>
+</section>
+
+<!-- STEP 6 -->
+<section class="step" id="render">
+  <div class="step-copy">
+    <span class="step-num">STEP 6 OF 6</span>
+    <h2>Render, then pick a favorite</h2>
+    <p>The job card shows your references, your brief, and the script AI wrote from it. Each video appears as soon as it finishes.</p>
+    <ul>
+      <li><b>Pick my favorite</b> shows your videos two at a time, with names hidden. Three videos take two picks. The winner's look is preselected for your next job.</li>
+      <li>Portrait videos get a <b>Post</b> button for Instagram Reels and TikTok.</li>
+      <li>Re-running the same job costs nothing. Every AI result is cached.</li>
+    </ul>
+  </div>
+  <figure class="frame" aria-label="Mockup: finished render job">
+    <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / videos</div></div>
+    <div class="app">
+      <div class="job">
+        <div class="job-head"><span class="status-ok">READY</span><span class="mono small muted">3 videos · 6 scenes · 0:31</span>
+          <div class="refs">
+            <div class="thumb" title="Character reference"><div class="scene v-photo"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100" style="top:8%;left:0;width:100%"><use href="#cat"/></svg></div></div>
+            <div class="thumb" title="Style reference"><div class="scene v-synth"><div class="bg"></div></div></div>
+          </div>
+        </div>
+        <p class="preview"><b>Brief:</b> A harbor cat waits on the pier while the fishing boats go out at dawn…</p>
+        <p class="preview ai"><b>AI script ✨</b> Before the sun is up, the harbor is already awake. The boats wait, patient as old dogs. On the pier, a small white cat…</p>
+        <div class="vids">
+          <figure><div class="scene v-clay"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg><div class="cap">The boats wait, <span class="acc">patient</span> as old dogs.</div></div><figcaption>Claymation</figcaption><span class="btn sm">Post</span></figure>
+          <figure><div class="scene v-synth"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg><div class="cap">The boats wait, <span class="acc">patient</span> as old dogs.</div></div><figcaption>Style reference</figcaption><span class="btn sm">Post</span></figure>
+          <figure><div class="scene v-water"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100"><use href="#cat"/></svg><div class="cap">The boats wait, <span class="acc">patient</span> as old dogs.</div></div><figcaption>Watercolor</figcaption><span class="btn sm">Post</span></figure>
+        </div>
+        <p class="foot" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="btn sm">Pick my favorite</span>2 blind picks · names hidden until you choose</p>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- LIVE STORYBOARD -->
+<section class="sec" id="storyboard" aria-labelledby="sb-h">
+  <span class="eyebrow">Try it · runs the app's real storyboard rules</span>
+  <h2 id="sb-h">How your text becomes scenes</h2>
+  <p>Scenes are cut from the script without any AI, so the same text always yields the same storyboard. Each sentence becomes a scene. A sentence over 18 words splits at commas, semicolons, or dashes. A fragment under 4 words merges into its neighbor. Each scene's highlighted caption word is its longest word that isn't a stop word. Edit the text to see it re-cut.</p>
+  <div class="sb">
+    <div>
+      <label for="sb-input" class="field">Narration script (the AI script from step 6)</label>
+      <textarea id="sb-input" spellcheck="false">Before the sun is up, the harbor is already awake. The boats wait, patient as old dogs. On the pier, a small white cat with a gray saddle watches every rope. When the wind shifts, they move. She stays. All day she keeps the pier warm for them, and at dusk, the first engine she hears is the one she was waiting for.</textarea>
+      <div class="sb-meta" aria-live="polite"><span><b id="sb-words">0</b> words</span><span><b id="sb-count">0</b> scenes</span><span>≈<b id="sb-sec">0</b>s if narration is off</span></div>
+    </div>
+    <ol class="scenes" id="sb-out"></ol>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section class="sec" id="pipeline" aria-labelledby="pipe-h">
+  <span class="eyebrow">Under the hood</span>
+  <h2 id="pipe-h">What happens after you press Render</h2>
+  <p>The request only validates and queues. All the slow and paid work happens in one background worker, and every paid call is checked against a cache first. Step through the example job: three videos, a brief, a cat photo, a synthwave style image, and a music track.</p>
+  <figure class="sys" id="sys" style="margin:0">
+    <div class="sys-controls">
+      <button type="button" id="sys-play" class="primary" aria-pressed="false">Play</button>
+      <button type="button" id="sys-prev" aria-label="Previous step">← Prev</button>
+      <button type="button" id="sys-next" aria-label="Next step">Next →</button>
+      <div class="steps-dots" id="sys-dots" role="group" aria-label="Jump to step"></div>
+    </div>
+    <div class="sys-canvas">
+    <svg viewBox="0 0 1000 500" role="img" aria-labelledby="pipe-title">
+      <title id="pipe-title">Text-to-video pipeline: browser, POST /render-jobs, render_jobs, the local-render worker's job prep, per-scene loop and assembly, OpenAI, local tools, MEDIA_DIR, and clips and pairs</title>
+      <rect class="grp" x="362" y="92" width="448" height="336" rx="10"/>
+      <text class="grp-t" x="374" y="110">LOCAL-RENDER WORKER</text>
+      <text class="grp-t" x="380" y="124">JOB PREP · ONCE</text>
+      <text class="grp-t" x="380" y="240">PER SCENE · × 6</text>
+      <text class="grp-t" x="380" y="362">ASSEMBLE · PER VIDEO × 3</text>
+
+      <path class="e" id="e_submit" d="M140 250 L170 250"/>
+      <path class="e" id="e_store" d="M330 238 C350 238 350 45 370 45"/>
+      <path class="e" id="e_row" d="M250 275 L250 330"/>
+      <path class="e" id="e_enq" d="M330 345 C352 345 356 150 380 150"/>
+      <path class="e" id="e_script_ai" d="M445 132 C445 98 915 98 915 132"/>
+      <path class="e" id="e_script_row" d="M380 162 C356 162 352 356 330 356"/>
+      <path class="e" id="e_subj_ai" d="M585 132 C585 104 900 104 905 132"/>
+      <path class="e" id="e_style_ai" d="M725 132 C725 112 890 112 895 132"/>
+      <path class="e" id="e_refs_media" d="M650 132 L650 70"/>
+      <path class="e" id="e_plan_ai" d="M650 200 L850 200"/>
+      <path class="e" id="e_card_ai" d="M475 252 C475 228 820 228 850 222"/>
+      <path class="e" id="e_card_comp" d="M570 270 L600 270"/>
+      <path class="e" id="e_comp_tools" d="M790 270 C820 270 822 318 850 318"/>
+      <path class="e" id="e_voice_ai" d="M475 304 C475 296 915 297 915 258"/>
+      <path class="e" id="e_voice_tools" d="M475 340 C475 354 830 358 850 352"/>
+      <path class="e" id="e_voice_kb" d="M570 322 L600 322"/>
+      <path class="e" id="e_kb_tools" d="M790 322 L850 330"/>
+      <path class="e" id="e_kb_concat" d="M695 340 C695 362 475 360 475 378"/>
+      <path class="e" id="e_concat_xfade" d="M570 396 L600 396"/>
+      <path class="e" id="e_xfade_media" d="M790 396 C992 396 992 45 980 45"/>
+      <path class="e" id="e_pairs" d="M600 404 C500 455 400 452 330 452"/>
+      <path class="e" id="e_back" d="M170 452 C110 452 80 330 80 290"/>
+
+      <g class="n" id="n_browser"><rect x="20" y="210" width="120" height="80" rx="10"/><text x="32" y="234">Browser</text><text class="s" x="32" y="254">Submit form</text><text class="s" x="32" y="270">Pick · Post</text></g>
+      <g class="n" id="n_route"><rect x="170" y="225" width="160" height="50" rx="8"/><text x="182" y="246">POST /render-jobs</text><text class="s" x="182" y="264">validate · store · queue</text></g>
+      <g class="n" id="n_rjobs"><rect x="170" y="330" width="160" height="40" rx="8"/><text x="182" y="355">render_jobs</text></g>
+      <g class="n" id="n_pairs"><rect x="170" y="432" width="160" height="40" rx="8"/><text x="182" y="457">clips · pairs</text></g>
+      <g class="n" id="n_media"><rect x="370" y="20" width="610" height="50" rx="10"/><text x="384" y="41">MEDIA_DIR</text><text class="s" x="384" y="59">reference-images/&lt;sha&gt;.png · music/&lt;sha&gt;.mp3 · .ai-cache/ · &lt;clipId&gt;.mp4</text></g>
+
+      <g class="n" id="n_script"><rect x="380" y="132" width="130" height="36" rx="7"/><text x="392" y="149">write script</text><text class="s" x="392" y="162">brief mode only</text></g>
+      <g class="n" id="n_subj"><rect x="520" y="132" width="130" height="36" rx="7"/><text x="532" y="149">describe subject</text><text class="s" x="532" y="162">character photo</text></g>
+      <g class="n" id="n_style"><rect x="660" y="132" width="130" height="36" rx="7"/><text x="672" y="149">describe style</text><text class="s" x="672" y="162">style image</text></g>
+      <g class="n" id="n_plan"><rect x="520" y="182" width="130" height="36" rx="7"/><text x="532" y="199">scene prompts</text><text class="s" x="532" y="212">1 per style</text></g>
+
+      <g class="n" id="n_card"><rect x="380" y="252" width="190" height="36" rx="7"/><text x="392" y="269">scene image</text><text class="s" x="392" y="282">SVG · or AI generate/edit</text></g>
+      <g class="n" id="n_comp"><rect x="600" y="252" width="190" height="36" rx="7"/><text x="612" y="269">caption composite</text><text class="s" x="612" y="282">accent word highlighted</text></g>
+      <g class="n" id="n_voice"><rect x="380" y="304" width="190" height="36" rx="7"/><text x="392" y="321">voice</text><text class="s" x="392" y="334">say · TTS · or silence</text></g>
+      <g class="n" id="n_kb"><rect x="600" y="304" width="190" height="36" rx="7"/><text x="612" y="321">Ken Burns encode</text><text class="s" x="612" y="334">timed to the audio</text></g>
+
+      <g class="n" id="n_concat"><rect x="380" y="378" width="190" height="36" rx="7"/><text x="392" y="395">audio + music mix</text><text class="s" x="392" y="408">0.35 s gaps · loop · fade</text></g>
+      <g class="n" id="n_xfade"><rect x="600" y="378" width="190" height="36" rx="7"/><text x="612" y="395">crossfade → MP4</text><text class="s" x="612" y="408">0.5 s xfade · 30 fps</text></g>
+
+      <g class="n" id="n_openai"><rect x="850" y="132" width="130" height="126" rx="10"/><text x="862" y="154">OpenAI</text><text class="s" x="862" y="176">gpt-5-nano</text><text class="s" x="862" y="194">vision</text><text class="s" x="862" y="212">gpt-image-1-mini</text><text class="s" x="862" y="230">gpt-4o-mini-tts</text></g>
+      <g class="n" id="n_tools"><rect x="850" y="300" width="130" height="66" rx="10"/><text x="862" y="322">Local tools</text><text class="s" x="862" y="340">say · sharp</text><text class="s" x="862" y="356">ffmpeg</text></g>
+
+      <circle class="token" id="token" r="7" cx="140" cy="250"/>
+    </svg>
+    </div>
+    <div class="sys-caption" aria-live="polite">
+      <span class="eyebrow" id="sys-step">Step 1 of 8</span>
+      <span class="t" id="sys-t"></span>
+      <p id="sys-d" style="max-width:none"></p>
+      <pre id="sys-data"></pre>
+    </div>
+  </figure>
+</section>
+
+<!-- RULES + COST -->
+<section class="sec" id="rules" aria-labelledby="rules-h">
+  <span class="eyebrow">Guardrails</span>
+  <h2 id="rules-h">Requests it rejects, and why</h2>
+  <p>The app never quietly downgrades a request. If an input can't affect the output, or a setting can't be honored, submit fails with a message that says exactly what to fix. The form checks the same rules before you submit.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>If you…</th><th>Why it's rejected</th></tr></thead>
+    <tbody>
+      <tr><td>Add a character photo, but no video uses AI imagery</td><td class="why">Procedural scenes can't draw your character, so the photo would be silently ignored.</td></tr>
+      <tr><td>Add a style image, but no video's style is Style reference</td><td class="why">Nothing would use it.</td></tr>
+      <tr><td>Pick Style reference without uploading a style image</td><td class="why">There's no style to describe.</td></tr>
+      <tr><td>Pick Style reference with procedural imagery</td><td class="why">The style description only steers the AI image model.</td></tr>
+      <tr><td>Choose “AI writes the script,” AI imagery, or an OpenAI voice without an OpenAI key</td><td class="why">It would otherwise fall back to something you didn't ask for.</td></tr>
+      <tr><td>Turn narration off, with videos that differ only in voice</td><td class="why">Voice is silent, so the videos would be identical and picking between them meaningless.</td></tr>
+      <tr><td>Upload music over 15 MB or not MP3/M4A/WAV, or an image over 8 MB or not PNG/JPEG/WebP</td><td class="why">Files are checked by their real contents, not their names.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="cost">
+    <div><b>$0</b><span>Procedural imagery and a Mac voice. Fully local, with no key required.</span></div>
+    <div><b>≈$0.03</b><span>Per AI video of about 4 scenes: one prompt plan, scene images at low quality, and TTS.</span></div>
+    <div><b>$0</b><span>Any re-run, resume, or identical re-submit. Every paid result is cached by its inputs.</span></div>
+  </div>
+  <p class="foot-note">Model names are the app's cheap testing defaults and can be changed in config. The subject and style descriptions shown in steps 3–4 are illustrative. The acceptance runs that verified this path, including the cat and synthwave job, are recorded in the repo's <span class="mono">docs/text-to-video-controls.md</span> and <span class="mono">docs/adding-ai-layers.md</span>. The pipeline on this page is built and verified today. The tab layout and the blind pick on the job card are part of the planned two-mode streamlining.</p>
+</section>
+
+</div>
+
+<script>
+/* ---------- live storyboard: a port of server/src/renderer/storyboard.ts ---------- */
+(function(){
+  var MAX = 18, MIN = 4;
+  var STOP = new Set(("a an and are as at be but by for from has have he her his i if in is it its me my no not of on or our she so that the their them they this to us was we were what when which who will with you your").split(" "));
+  function words(t){ t = t.trim(); return t === "" ? [] : t.split(/\s+/); }
+  function splitSentences(t){ return t.replace(/\s+/g," ").split(/(?<=[.!?…])\s+/).map(function(s){return s.trim();}).filter(Boolean); }
+  function splitLong(s){
+    if (words(s).length <= MAX) return [{t:s, why:null}];
+    var out = [];
+    s.split(/(?<=[,;:—])\s+/).map(function(c){return c.trim();}).filter(Boolean).forEach(function(c){
+      var w = words(c);
+      if (w.length <= MAX){ out.push({t:c, why:"split at clause"}); return; }
+      for (var i = 0; i < w.length; i += MAX - 4) out.push({t:w.slice(i, i + MAX - 4).join(" "), why:"hard split"});
+    });
+    return out;
+  }
+  function mergeTiny(chunks){
+    var out = [];
+    chunks.forEach(function(c){
+      var prev = out[out.length - 1];
+      if (prev && (words(c.t).length < MIN || words(prev.t).length < MIN) && words(prev.t).length + words(c.t).length <= MAX){
+        prev.t = prev.t + " " + c.t; prev.why = "merged a short fragment";
+      } else out.push({t:c.t, why:c.why});
+    });
+    return out;
+  }
+  function accent(text){
+    var best = null;
+    words(text).forEach(function(raw){
+      var w = raw.replace(/[^\p{L}\p{N}'-]/gu, "");
+      if (w.length < 4 || STOP.has(w.toLowerCase())) return;
+      if (best === null || w.length > best.length) best = w;
+    });
+    return best;
+  }
+  function esc(s){ return s.replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+  var input = document.getElementById("sb-input"), out = document.getElementById("sb-out");
+  function render(){
+    var scenes = mergeTiny(splitSentences(input.value).reduce(function(a, s){ return a.concat(splitLong(s)); }, []));
+    var total = 0;
+    out.innerHTML = "";
+    scenes.forEach(function(sc, i){
+      var n = words(sc.t).length, sec = Math.max(2, n / 2.5); total += sec;
+      var a = accent(sc.t), html = esc(sc.t);
+      if (a){
+        var idx = sc.t.indexOf(a);
+        if (idx >= 0) html = esc(sc.t.slice(0, idx)) + "<mark>" + esc(a) + "</mark>" + esc(sc.t.slice(idx + a.length));
+      }
+      var li = document.createElement("li");
+      li.innerHTML = '<span class="ix">' + String(i + 1).padStart(2, "0") + '</span><span>' + html + '</span><span class="d">' + n + " w · " + sec.toFixed(1) + "s</span>" +
+        (sc.why ? '<span class="why">' + sc.why + "</span>" : "");
+      out.appendChild(li);
+    });
+    document.getElementById("sb-words").textContent = words(input.value).length;
+    document.getElementById("sb-count").textContent = scenes.length;
+    document.getElementById("sb-sec").textContent = Math.round(total + 0.35 * scenes.length);
+  }
+  input.addEventListener("input", render);
+  render();
+})();
+
+/* ---------- animated pipeline ---------- */
+(function(){
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var STEPS = [
+    {t:"Submit: validate, store, queue", nodes:["n_browser","n_route","n_media","n_rjobs"], edges:["e_submit","e_store","e_row"],
+     d:"The form sends one JSON request with the photo, style image, and song inside it. The route checks every rejection rule, verifies each file by its real bytes, and stores it under its content hash, so an identical upload is stored once. It then writes a render_jobs row and queues the job. The route itself never calls OpenAI.",
+     data:"brief 22 words · scriptMode \"generate\" · 3 treatments\nmochi.jpg  → reference-images/1a8f….png  (PNG, ≤1024 px, EXIF stripped)\nsynthwave.png → reference-images/7c02….png\nharbor-lofi.mp3 → music/e41d….mp3  (ffprobe-validated)"},
+    {t:"Write the script (brief mode only)", nodes:["n_rjobs","n_script","n_openai"], edges:["e_enq","e_script_ai","e_script_row"],
+     d:"The worker picks up the job. Because the text is a brief, gpt-5-nano writes the narration: plain spoken prose aimed at 60–120 words and clamped to 450 at a sentence boundary. It is saved to the job row, so a resume or retry reuses it and all three videos narrate identical words.",
+     data:"cache check (script, model, instructions, brief) → miss → gpt-5-nano\n→ 63-word script → render_jobs.narration_script"},
+    {t:"Describe the references", nodes:["n_subj","n_style","n_openai","n_media"], edges:["e_subj_ai","e_style_ai","e_refs_media"],
+     d:"Two vision calls. One describes what the cat looks like and nothing about its pose. The other describes the style image's medium, palette, texture, and lighting, with subject nouns banned. Each is cached by the image's hash plus the instruction text, so editing the instructions regenerates them.",
+     data:"subject: \"white body, gray tabby saddle, amber eyes…\"   ≈$0.001\nstyle:   \"synthwave: purple→magenta dusk, neon rim light, cyan grid…\""},
+    {t:"Plan every scene's image", nodes:["n_plan","n_openai"], edges:["e_plan_ai"],
+     d:"The script is cut into scenes without AI (try it above). Then one structured-output call per style writes a shared continuity bible plus one image prompt per scene. It must restate the subject description word for word, never put text in the image, and keep the lower 30% calm so captions stay readable.",
+     data:"6 scenes × 3 styles → 3 prompt plans (claymation, reference, watercolor)\n{ continuity: \"…\", scenes: [{ index: 0, imagePrompt: \"…\" }, …] }"},
+    {t:"Draw each scene and bake its caption", nodes:["n_card","n_comp","n_openai","n_tools"], edges:["e_card_ai","e_card_comp","e_comp_tools"],
+     d:"With a character photo, each AI scene uses the image edits endpoint with the photo attached. Procedural scenes are seeded SVG, free and identical on every run. Either way sharp cover-fits the image with zoom headroom, then composites the caption in the style's own typography, with the scene's accent word highlighted.",
+     data:"portrait scene: 1024×1536 → cover 1350×2400 (1.25× headroom for Ken Burns)\ncaption: \"The boats wait, [patient] as old dogs.\""},
+    {t:"Voice each scene, then add motion", nodes:["n_voice","n_kb","n_openai","n_tools"], edges:["e_voice_ai","e_voice_tools","e_voice_kb","e_kb_tools"],
+     d:"An openai:nova voice produces a cached MP3, and a Mac voice produces AIFF via say. With narration off, each scene gets silence timed at words ÷ 2.5 seconds. ffprobe measures the real audio, and that length sets how long the scene's slow Ken Burns zoom runs.",
+     data:"scene 2: 7 words → nova mp3 2.9 s → zoompan 30 fps for 2.9 s"},
+    {t:"Mix audio and assemble the video", nodes:["n_concat","n_xfade","n_tools","n_media"], edges:["e_kb_concat","e_concat_xfade","e_xfade_media"],
+     d:"Scene audio is joined with 0.35 s gaps, and the song is looped under it at 40% with a 2 s fade-out. Scenes crossfade for 0.5 s. The finished MP4 is written to scratch, then atomically renamed into MEDIA_DIR, so a crash never leaves a half-written video.",
+     data:"narration ×1.00 + music ×0.40 (amix normalize=0) → 0:31\n→ MEDIA_DIR/3f9e….mp4"},
+    {t:"Pair the videos, pick a favorite, and post", nodes:["n_pairs","n_browser"], edges:["e_pairs","e_back"],
+     d:"With 3 videos there are C(3,2) = 3 pairs. Here the videos differ only in style, so every pair is a clean comparison on style. The job turns ready, and the job card offers a blind knockout: two picks for three videos. The winning look is saved as your next job's default, and portrait videos can be posted.",
+     data:"pairs: claymation↔reference, claymation↔watercolor, reference↔watercolor\nmode \"clean_compare\" · ab_field \"style\"\n2 blind picks → winner \"reference\" → preselected next time"}
+  ];
+  var svg = document.querySelector("#sys svg"), token = document.getElementById("token");
+  var dots = document.getElementById("sys-dots"), playBtn = document.getElementById("sys-play");
+  var cur = 0, playing = false, animId = 0, timer = null;
+  STEPS.forEach(function(s, i){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = String(i + 1);
+    b.setAttribute("aria-label", "Step " + (i + 1) + ": " + s.t);
+    b.addEventListener("click", function(){ stop(); show(i, true); });
+    dots.appendChild(b);
+  });
+  function show(i, anim){
+    cur = (i + STEPS.length) % STEPS.length; var s = STEPS[cur];
+    svg.querySelectorAll(".n.active").forEach(function(n){ n.classList.remove("active"); });
+    svg.querySelectorAll("path.e.active").forEach(function(p){ p.classList.remove("active"); });
+    s.nodes.forEach(function(id){ var n = document.getElementById(id); if (n) n.classList.add("active"); });
+    s.edges.forEach(function(id){ var p = document.getElementById(id); if (p) p.classList.add("active"); });
+    document.getElementById("sys-step").textContent = "Step " + (cur + 1) + " of " + STEPS.length;
+    document.getElementById("sys-t").textContent = s.t;
+    document.getElementById("sys-d").textContent = s.d;
+    document.getElementById("sys-data").textContent = s.data;
+    Array.prototype.forEach.call(dots.children, function(b, j){ if (j === cur) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current"); });
+    run(s.edges, anim);
+  }
+  function place(p, len){ var pt = p.getPointAtLength(len); token.setAttribute("cx", pt.x); token.setAttribute("cy", pt.y); }
+  function run(ids, anim){
+    cancelAnimationFrame(animId);
+    var paths = ids.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+    if (!paths.length) return;
+    if (reduce || !anim){ var l = paths[paths.length - 1]; place(l, l.getTotalLength()); return; }
+    var k = 0, start = null, per = 750;
+    function frame(ts){
+      if (start === null) start = ts;
+      var p = paths[k], t = Math.min(1, (ts - start) / per), e = t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+      place(p, e * p.getTotalLength());
+      if (t >= 1){ k++; start = null; if (k >= paths.length) return; }
+      animId = requestAnimationFrame(frame);
+    }
+    animId = requestAnimationFrame(frame);
+  }
+  function schedule(){ clearTimeout(timer); var ms = Math.max(3600, STEPS[cur].edges.length * 750 + 2200);
+    timer = setTimeout(function(){ if (!playing) return; show(cur + 1, true); schedule(); }, ms); }
+  function play(){ playing = true; playBtn.textContent = "Pause"; playBtn.setAttribute("aria-pressed","true"); show(cur, true); schedule(); }
+  function stop(){ playing = false; clearTimeout(timer); playBtn.textContent = "Play"; playBtn.setAttribute("aria-pressed","false"); }
+  playBtn.addEventListener("click", function(){ playing ? stop() : play(); });
+  document.getElementById("sys-prev").addEventListener("click", function(){ stop(); show(cur - 1, true); });
+  document.getElementById("sys-next").addEventListener("click", function(){ stop(); show(cur + 1, true); });
+  show(0, false);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>ClipDuel Guides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F1F2F6; --surface:#FFFFFF; --ink:#161922; --muted:#5B6173; --line:#DADDE6; --accent:#F4C20D; --accent-ink:#161922;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{color-scheme:dark;--ground:#111319;--surface:#1A1D27;--ink:#ECEEF4;--muted:#9BA2B5;--line:#2D3242}
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:16px/1.6 var(--body);padding-inline:20px;padding-block:0 64px}
+.wrap{max-width:960px;margin:0 auto;display:grid;gap:28px;padding-top:72px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{font:900 clamp(40px,7vw,72px)/1.02 var(--display);font-stretch:112%;letter-spacing:-.01em;margin:0;max-width:16ch;text-wrap:balance}
+.hl{background:linear-gradient(transparent 12%,var(--accent) 12%,var(--accent) 88%,transparent 88%);color:var(--accent-ink);padding-inline:.12em}
+.lede{font-size:19px;color:var(--muted);max-width:60ch;margin:0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:680px){.cards{grid-template-columns:1fr}}
+.card{display:grid;grid-template-rows:auto auto 1fr auto;gap:8px;padding:22px;border:1px solid var(--line);border-radius:14px;background:var(--surface);text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--ink)}
+.card:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.card .k{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.card b{font:800 26px/1.1 var(--display);font-stretch:108%}
+.card span{color:var(--muted);font-size:15px}
+.card .go{color:var(--ink);font-weight:600;margin-top:6px}
+.foot{font-size:13px;color:var(--muted);max-width:70ch}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <span class="eyebrow">ClipDuel · guides</span>
+  <h1>Make short-form video from <span class="hl">footage or text.</span></h1>
+  <p class="lede">ClipDuel runs on your own machine. It turns long videos into captioned clips, or scripts into styled videos, then posts them to Instagram Reels and TikTok, now or one a day.</p>
+  <div class="cards">
+    <a class="card" href="first-run.html"><span class="k">Make clips · start here</span><b>First-run guide</b><span>Upload a long video, pick a caption style once, review the moments it finds, then post or schedule.</span><span class="go">Open the guide →</span></a>
+    <a class="card" href="text-to-video.html"><span class="k">Make videos</span><b>Text-to-video guide</b><span>Write a script or a brief. Add your own character and an art style, then pick your favorite of up to four looks.</span><span class="go">Open the guide →</span></a>
+  </div>
+  <p class="foot">These guides show the planned two-mode app. Screens are mockups, and clip titles, scores, and descriptions are illustrative.</p>
+</main>
+
+</body>
+</html>
