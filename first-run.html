@@ -97,6 +97,7 @@ p{margin:0}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 14px/1 var(--body);padding:11px 16px;border-radius:8px;background:var(--btn);color:var(--btn-ink);border:0}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .btn.sm{padding:7px 10px;font-size:12.5px}
+.btn.accent{background:var(--accent);color:var(--accent-ink)}
 .field{display:grid;gap:6px;font-size:13px;color:var(--muted)}
 .input{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:9px 11px;color:var(--ink);font-size:14px}
 .row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
@@ -221,7 +222,7 @@ p{margin:0}
 <div class="wrap">
 
 <header class="hero">
-  <span class="eyebrow">ClipDuel · new-user guide · proposed streamlined app</span>
+  <span class="eyebrow">ClipDuel · new-user guide · Make clips</span>
   <h1>Turn footage into clips, or text into videos. <span class="hl">Then post.</span></h1>
   <p class="lede">ClipDuel has two ways to start and one way to finish. Make clips from a long video, or make videos from a script or idea. Either way, you pick what you like, then post it now or schedule one a day. This guide walks through the clip path.</p>
   <div class="modes">
@@ -245,8 +246,8 @@ p{margin:0}
     <h2>Drop in a long video</h2>
     <p>Podcasts, interviews, talks, and streams work best. The app needs spoken audio, because it finds moments by reading what was said.</p>
     <ul>
-      <li>Choose how many clips you want, from 1 to 5.</li>
-      <li>Your saved caption style is shown next to the button. Click it to change.</li>
+      <li>Choose how many clips you want, from 1 to 5. Your first run is capped at 1 to 3, because it renders every clip in all four caption styles (step 2).</li>
+      <li>Your saved caption style is shown in the top bar. Click <b>Caption style ▾</b> to change it.</li>
       <li>Uploading the same file again costs nothing. The transcript is cached.</li>
     </ul>
     <p class="note">Cost is about <span class="mono">$0.006</span> per minute of audio, so a 45-minute episode is roughly 27¢.</p>
@@ -257,23 +258,23 @@ p{margin:0}
       <div class="appbar">
         <span class="brand">ClipDuel</span>
         <div class="tabs"><span class="on">Make clips</span><span>Make videos</span><span>Schedule</span></div>
-        <span class="gear"><span class="swatch" aria-hidden="true"></span>Caption style: Bold Pop</span>
+        <span class="gear"><span class="swatch" aria-hidden="true"></span>Caption style: Bold Pop ▾</span>
       </div>
       <div class="drop">
         <strong>Drop a video file here</strong>
-        <span class="muted small">MP4, MOV, or WebM · up to 2 GB · needs an audio track</span>
+        <span class="muted small">or click to choose · MP4, MOV, WebM, or MKV · needs spoken audio</span>
       </div>
       <div class="file">
         <div class="thumb" aria-hidden="true"></div>
         <div class="meta"><b>podcast-ep12-full.mp4</b><span class="mono small muted">45:12 · 1.3 GB · 1920×1080</span></div>
-        <span class="pill-ok">UPLOADED</span>
+        <span class="pill-ok">READY</span>
       </div>
       <div class="row">
         <label class="field">How many clips
           <span class="input mono">3 ▾</span>
         </label>
         <span class="muted small" style="flex:1;min-width:160px">Each clip is 9:16, captioned in <b>Bold Pop</b>, cropped to fill.</span>
-        <span class="btn">Find my clips</span>
+        <span class="btn accent">Find my clips</span>
       </div>
     </div>
   </figure>
@@ -284,13 +285,13 @@ p{margin:0}
   <div class="step-copy">
     <span class="step-num">STEP 2 OF 6 · <span class="tag once">first run only</span></span>
     <h2>Pick the captions you like, three taps</h2>
-    <p>On your first run, the top moment is rendered in all four caption styles. You compare them two at a time, without names, and pick the one that reads better. The winner becomes your default.</p>
+    <p>Your first run renders every moment, up to three, in all four caption styles. You then compare the four versions of the top-scoring moment two at a time, without names, and pick the one that reads better. The winner becomes your default, and the job card keeps only its clips.</p>
     <ul>
       <li>Four styles, three picks, done in under a minute.</li>
       <li>Both sides show the same words, so you judge only the look.</li>
       <li>Names appear only after the final pick.</li>
     </ul>
-    <p class="note">This is the only vote in clip mode. You can rerun it anytime from <b>Caption style</b> in the top bar. Video mode works differently: you pick a favorite from each job.</p>
+    <p class="note">This is the only vote in clip mode. From <b>Caption style ▾</b> in the top bar, <b>Rerun setup</b> repeats it on your next job, and <b>Choose directly</b> picks a style by name. Video mode works differently: you pick a favorite from each job.</p>
   </div>
   <figure class="frame" aria-label="Mockup: first-run caption style pick">
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / make / style</div></div>
@@ -341,9 +342,9 @@ p{margin:0}
       <div class="job">
         <div class="job-head"><strong>podcast-ep12-full.mp4</strong><span class="mono small muted">3 clips · started 2:41 ago</span></div>
         <div class="stages">
-          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Upload</span><span class="sub">1.3 GB · cached</span></div>
-          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Transcribe</span><span class="sub">7,904 words</span></div>
-          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Find moments</span><span class="sub">6 windows · 3 kept</span></div>
+          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Upload</span><span class="sub">45:12 of video</span></div>
+          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Transcribe</span><span class="sub">words + timestamps</span></div>
+          <div class="stage done"><div class="bar"><b></b></div><span class="lbl">Find moments</span><span class="sub">3 kept</span></div>
           <div class="stage active"><div class="bar"><b></b></div><span class="lbl">Render</span><span class="sub">clip 2 of 3</span></div>
         </div>
 <div class="log">[12:04] "Fewer ideas, better ideas"   score 91   0:42 long
@@ -363,7 +364,7 @@ p{margin:0}
     <ul>
       <li><b>Post</b> publishes now to Instagram Reels, TikTok, or both.</li>
       <li><b>Schedule</b> adds the clip to your one-a-day queue.</li>
-      <li><b>⋯ → Other style</b> re-renders just that clip in a different caption style, for when one moment needs a different look.</li>
+      <li><b>⋯ → Re-make the whole job in</b> another caption style starts a new job on the same video. It reuses the transcript and the moments, so it costs nothing in AI.</li>
     </ul>
   </div>
   <figure class="frame" aria-label="Mockup: finished clips">
@@ -405,6 +406,7 @@ p{margin:0}
     <h2>Post it, or queue it</h2>
     <p>Write one caption, pick your platforms, and choose whether it goes out now or joins the daily queue. The same form does both, so there's nothing new to learn.</p>
     <ul>
+      <li><b>Post</b> opens it with <b>Post now</b> as the main button. <b>Schedule</b> opens the same form with <b>Add to daily queue</b> as the main button.</li>
       <li>Only platforms you've connected can be selected.</li>
       <li>A post is sent exactly once. If something fails, you retry it yourself, so the same clip never goes out twice.</li>
     </ul>
@@ -475,14 +477,14 @@ p{margin:0}
   <div style="display:grid;gap:10px">
     <span class="eyebrow">What a new user won't see</span>
     <h2 id="retired-h">Three things folded away</h2>
-    <p class="muted" style="max-width:62ch">The old app had four tabs and three creation modes. It now has three tabs and two modes. The rest is removed, folded in, or hidden behind a flag, and your existing clips and votes are kept either way.</p>
+    <p class="muted" style="max-width:62ch">The old app had four tabs and three creation modes. It now has three tabs and two modes. The rest is removed, folded in, or moved behind a flag, and your existing clips and votes are kept either way.</p>
   </div>
   <div class="gone-grid">
     <div class="gone"><span class="chip fold">Folded into quick picks</span><h3>Vote tab</h3><p>Voting now happens where you work: the three-pick caption setup for clips, and a blind “pick your favorite” on each video job. There's no longer an endless stream of pairs to judge.</p></div>
     <div class="gone"><span class="chip cut">Removed</span><h3>Results &amp; leaderboards</h3><p>Your picks become your defaults: a caption style for clips, and your last favorite look for videos. No ranking table needed.</p></div>
-    <div class="gone"><span class="chip lab">Labs · off by default</span><h3>Video → animate</h3><p>AI-animated segments stay behind a flag until the pending quality checks pass.</p></div>
+    <div class="gone"><span class="chip lab">Labs · off by default</span><h3>Video → animate</h3><p>AI-animated segments passed their quality checks and a live test in September 2026. They stay behind a flag as the <b>Animate (Labs)</b> tab, because they call a paid video-generation service.</p></div>
   </div>
-  <p class="foot">Mockups show the proposed streamlined app, not the current build. Clip titles, scores, and timestamps are illustrative. The caption styles shown are the app's four real presets: Bold Pop, Clean Lower-Third, Pill Punch, and Caps Classic.</p>
+  <p class="foot">Mockups follow the current app, simplified. Clip titles, scores, and timestamps are illustrative. The caption styles shown are the app's four real presets: Bold Pop, Clean Lower-Third, Pill Punch, and Caps Classic.</p>
 </section>
 
 </div>

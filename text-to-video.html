@@ -83,9 +83,9 @@ a{color:inherit}
 .app{padding:18px;display:grid;gap:14px}
 .appbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{font:900 18px/1 var(--display);font-stretch:115%}
-.tabs{display:flex;gap:4px;flex-wrap:wrap}
-.tabs span{font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:6px;border:1px solid var(--line);color:var(--muted);background:var(--surface-2)}
-.tabs span.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:3px;border-radius:8px;border:1px solid var(--line)}
+.tabs span{font-size:13px;font-weight:500;padding:5px 12px;border-radius:6px;color:var(--muted)}
+.tabs span.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 14px/1 var(--body);padding:10px 14px;border-radius:8px;background:var(--btn);color:var(--btn-ink);border:0}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .btn.sm{padding:6px 9px;font-size:12px}
@@ -442,7 +442,7 @@ music    ×0.40 ─┘   looped · 2 s fade-out · no ducking</div>
     <h2>Render, then pick a favorite</h2>
     <p>The job card shows your references, your brief, and the script AI wrote from it. Each video appears as soon as it finishes.</p>
     <ul>
-      <li><b>Pick my favorite</b> shows your videos two at a time, with names hidden. Three videos take two picks. The winner's look is preselected for your next job.</li>
+      <li><b>Pick my favorite</b> shows your videos two at a time, with names hidden. Three videos take two picks. The winner's look is preselected as the first video of your next job, and the others lead with this week's 🔥 hot style.</li>
       <li>Portrait videos get a <b>Post</b> button for Instagram Reels and TikTok.</li>
       <li>Re-running the same job costs nothing. Every AI result is cached.</li>
     </ul>
@@ -451,7 +451,7 @@ music    ×0.40 ─┘   looped · 2 s fade-out · no ducking</div>
     <div class="chrome"><div class="dots"><i></i><i></i><i></i></div><div class="url">localhost:5173 / videos</div></div>
     <div class="app">
       <div class="job">
-        <div class="job-head"><span class="status-ok">READY</span><span class="mono small muted">3 videos · 6 scenes · 0:31</span>
+        <div class="job-head"><span class="status-ok">READY</span><span class="mono small muted">3 videos · 0:31</span>
           <div class="refs">
             <div class="thumb" title="Character reference"><div class="scene v-photo"><div class="bg"></div><svg class="cat" viewBox="0 0 100 100" style="top:8%;left:0;width:100%"><use href="#cat"/></svg></div></div>
             <div class="thumb" title="Style reference"><div class="scene v-synth"><div class="bg"></div></div></div>
@@ -585,7 +585,7 @@ music    ×0.40 ─┘   looped · 2 s fade-out · no ducking</div>
     <div><b>≈$0.03</b><span>Per AI video of about 4 scenes: one prompt plan, scene images at low quality, and TTS.</span></div>
     <div><b>$0</b><span>Any re-run, resume, or identical re-submit. Every paid result is cached by its inputs.</span></div>
   </div>
-  <p class="foot-note">Model names are the app's cheap testing defaults and can be changed in config. The subject and style descriptions shown in steps 3–4 are illustrative. The acceptance runs that verified this path, including the cat and synthwave job, are recorded in the repo's <span class="mono">docs/text-to-video-controls.md</span> and <span class="mono">docs/adding-ai-layers.md</span>. The pipeline on this page is built and verified today. The tab layout and the blind pick on the job card are part of the planned two-mode streamlining.</p>
+  <p class="foot-note">Model names are the app's cheap testing defaults and can be changed in config. The subject and style descriptions shown in steps 3–4 are illustrative. The acceptance runs that verified this path, including the cat and synthwave job, are recorded in the repo's <span class="mono">docs/text-to-video-controls.md</span> and <span class="mono">docs/adding-ai-layers.md</span>. The pipeline on this page is built and verified. The tab layout and the blind pick on the job card shipped with the two-mode app in September 2026.</p>
 </section>
 
 </div>
